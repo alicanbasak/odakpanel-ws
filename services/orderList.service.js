@@ -75,7 +75,7 @@ class OrderService {
     const whereClause =
       whereClauses.length > 0 ? ` WHERE ${whereClauses.join(" AND ")}` : "";
 
-    return await handleAsync(async () => {
+    try {
       const pool = await sql.connect();
 
       const totalCountQuery = `SELECT COUNT(*) AS TotalCount FROM OrderList${whereClause}`;
@@ -83,24 +83,44 @@ class OrderService {
       const totalCount = totalCountResult.recordset[0].TotalCount;
 
       const ordersQuery = `
-    SELECT * FROM (
-        SELECT *, ROW_NUMBER() OVER (ORDER BY Id DESC) AS RowNum
-        FROM OrderList
-        ${whereClause}
-    ) AS OrdersWithRowNum
-    WHERE RowNum > ${offset} AND RowNum <= ${offset + pageSize}
-  `;
+      SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (ORDER BY Id DESC) AS RowNum
+          FROM OrderList
+          ${whereClause}
+      ) AS OrdersWithRowNum
+      WHERE RowNum > ${offset} AND RowNum <= ${offset + pageSize}
+    `;
       const ordersResult = await pool.request().query(ordersQuery);
+      const orders = ordersResult.recordset;
 
-      const orders = ordersResult.recordset.map(
-        record => new OrderList(...Object.values(record))
-      );
+      const customerIds = [...new Set(orders.map(order => order.CustomerId))]; // Unique CustomerId values
+      let customers = {};
+      if (customerIds.length > 0) {
+        const customerQuery = `SELECT Id AS CustomerId, Name FROM Customers WHERE Id IN (${customerIds
+          .map(id => `'${id}'`)
+          .join(",")})`;
 
+        const customerResult = await pool.request().query(customerQuery);
+        customers = customerResult.recordset.reduce((acc, customer) => {
+          acc[customer.CustomerId] = customer.Name;
+          return acc;
+        }, {});
+      }
+
+      const ordersWithCustomerNames = orders.map(order => ({
+        ...order,
+        CustomerName: customers[order.CustomerId] || null,
+      }));
+
+      console.log("Orders with customer names:", ordersWithCustomerNames);
       return {
         totalCount: totalCount,
-        items: orders.slice(0, pageSize),
+        items: ordersWithCustomerNames,
       };
-    });
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw new Error("Failed to fetch orders");
+    }
   }
 
   async getOrderById(id) {
