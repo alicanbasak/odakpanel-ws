@@ -55,7 +55,6 @@ class RfqService {
       let customers = {};
       let rfqStatuses = {};
 
-      console.log("rfqStatusIds", rfqStatusIds);
       if (customerIds.length > 0) {
         const customerQuery = `SELECT Id AS CustomerId, Name FROM Customers WHERE Id IN (${customerIds
           .map(id => `'${id}'`)
@@ -73,9 +72,7 @@ class RfqService {
         const rfqStatusQuery = `SELECT Id AS RfqStatus, Name FROM RfqStatus WHERE Id IN (${rfqStatusIds
           .map(id => `'${id}'`)
           .join(",")})`;
-        console.log("rfqStatusQuery", rfqStatusQuery);
         const rfqStatusResult = await pool.request().query(rfqStatusQuery);
-        console.log("rfqStatusResult", rfqStatusResult);
         rfqStatuses = rfqStatusResult.recordset.reduce((acc, status) => {
           acc[status.RfqStatus] = status.Name;
           return acc;

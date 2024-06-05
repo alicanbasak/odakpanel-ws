@@ -112,13 +112,11 @@ class OrderService {
         CustomerName: customers[order.CustomerId] || null,
       }));
 
-      console.log("Orders with customer names:", ordersWithCustomerNames);
       return {
         totalCount: totalCount,
         items: ordersWithCustomerNames,
       };
     } catch (error) {
-      console.error("Error fetching orders:", error);
       throw new Error("Failed to fetch orders");
     }
   }
@@ -159,8 +157,7 @@ class OrderService {
       );
     } catch (error) {
       // Log error
-      console.error(error);
-      throw error;
+      throw new Error("Failed to create order");
     }
   }
 
