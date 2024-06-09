@@ -1,32 +1,8 @@
 const sql = require("mssql");
-const handleAsync = require("../handlers/asyncHandler");
-
 class RfqService {
   async getRfqList(page = 1, pageSize = 10, search) {
     const offset = (page - 1) * pageSize;
-
-    const addWhereClause = (
-      field,
-      value,
-      isString = false,
-      exclude = false
-    ) => {
-      if (value && value.length > 0) {
-        const valueList = Array.isArray(value) ? value : value.split(",");
-        const formattedList = isString
-          ? valueList.map(val => `'${val}'`).join(",")
-          : valueList.join(",");
-        if (exclude) {
-          whereClauses.push(`${field} NOT IN (${formattedList})`);
-        } else {
-          whereClauses.push(`${field} IN (${formattedList})`);
-        }
-      }
-    };
-
     const whereClauses = [];
-
-    // addWhereClause("Search", search, true);
 
     if (search) {
       whereClauses.push(
@@ -100,6 +76,37 @@ class RfqService {
       const result = await pool.request().query(query);
       return result.recordset[0];
     } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async deleteRfq(id) {
+    try {
+      const pool = await sql.connect();
+      console.log("Deleting RFQ with ID: ", id);
+
+      // first delete related factory prices
+      const deleteFactoryPricesQuery = `DELETE FROM RfqFactoryPrices WHERE RfqFactoryId IN (SELECT Id FROM RfqFactories WHERE RfqId = ${id})`;
+      console.log(
+        "Deleting related factory prices with query: ",
+        deleteFactoryPricesQuery
+      );
+      await pool.request().query(deleteFactoryPricesQuery);
+
+      // then delete related factories
+      const deleteFactoriesQuery = `DELETE FROM RfqFactories WHERE RfqId = ${id}`;
+      console.log(
+        "Deleting related factories with query: ",
+        deleteFactoriesQuery
+      );
+      await pool.request().query(deleteFactoriesQuery);
+
+      // finally delete the RFQ
+      const deleteRfqQuery = `DELETE FROM Rfqs WHERE Id = ${id}`;
+      console.log("Query: ", deleteRfqQuery);
+      await pool.request().query(deleteRfqQuery);
+    } catch (error) {
+      console.error("Error deleting RFQ with ID: ", id, error.message);
       throw new Error(error.message);
     }
   }
