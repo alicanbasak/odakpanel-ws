@@ -5,9 +5,8 @@ const Member = require("../models/Member.model");
 class MemberService {
   async getAllMembers() {
     return await handleAsync(async () => {
-      const pool = await sql.connect();
-      const result = await pool.request().query("SELECT * FROM Member");
-      return result.recordset.map(record => new Member(record));
+      const result = await Member.findAll();
+      return result;
     });
   }
 

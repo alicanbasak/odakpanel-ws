@@ -1,112 +1,105 @@
-const sql = require("mssql");
+const handleAsync = require("../handlers/asyncHandler");
+const Factories = require("../models/Factories.model");
+const Customers = require("../models/Customers.model");
+const Rfqs = require("../models/Rfqs.model");
+const RfqFactories = require("../models/RfqFactories.model");
+const RfqFactoryPrices = require("../models/RfqFactoryPrices.model");
+const { literal, Op } = require("sequelize");
+
 class RfqService {
   async getRfqList(page = 1, pageSize = 10, search) {
     const offset = (page - 1) * pageSize;
-    const whereClauses = [];
+    const whereClauses = {};
 
     if (search) {
-      whereClauses.push(
-        `(Id LIKE '%${search}%' OR Gerber LIKE '%${search}%' OR OdakCode LIKE '%${search}%' OR CustomerCode LIKE '%${search}%' OR OdakOrderNumber LIKE '%${search}%')`
-      );
+      whereClauses[Op.or] = [
+        { Id: { [Op.like]: `%${search}%` } },
+        { Gerber: { [Op.like]: `%${search}%` } },
+        { OdakCode: { [Op.like]: `%${search}%` } },
+        { OrderNumber: { [Op.like]: `%${search}%` } },
+        { CustomerCode: { [Op.like]: `%${search}%` } },
+        { OdakOrderNumber: { [Op.like]: `%${search}%` } },
+      ];
     }
 
-    const whereClause =
-      whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
-
     try {
-      const pool = await sql.connect();
+      const totalCount = await Rfqs.count({ where: whereClauses });
 
-      const totalCountQuery = `SELECT COUNT(*) AS TotalCount FROM Rfqs ${whereClause}`;
+      const rfqs = await Rfqs.findAll({
+        where: whereClauses,
+        include: [
+          { model: Factories, attributes: ["Name"] },
+          { model: Customers, attributes: ["Name"] },
+        ],
+        offset: offset,
+        limit: pageSize,
+        order: [["Id", "DESC"]],
+      });
 
-      const totalCountResult = await pool.request().query(totalCountQuery);
-      const totalCount = totalCountResult.recordset[0].TotalCount;
-
-      const rfqQuery = `SELECT * FROM Rfqs ${whereClause} ORDER BY Id OFFSET ${offset} ROWS FETCH NEXT ${pageSize} ROWS ONLY`;
-
-      const rfqResult = await pool.request().query(rfqQuery);
-      const rfqList = rfqResult.recordset;
-
-      const customerIds = [...new Set(rfqList.map(rfq => rfq.CustomerId))];
-      const rfqStatusIds = [...new Set(rfqList.map(rfq => rfq.RfqStatus))];
-      let customers = {};
-      let rfqStatuses = {};
-
-      if (customerIds.length > 0) {
-        const customerQuery = `SELECT Id AS CustomerId, Name FROM Customers WHERE Id IN (${customerIds
-          .map(id => `'${id}'`)
-          .join(",")})`;
-
-        const customerResult = await pool.request().query(customerQuery);
-
-        customers = customerResult.recordset.reduce((acc, customer) => {
-          acc[customer.CustomerId] = customer.Name;
-          return acc;
-        }, {});
-      }
-
-      if (rfqStatusIds.length > 0) {
-        const rfqStatusQuery = `SELECT Id AS RfqStatus, Name FROM RfqStatus WHERE Id IN (${rfqStatusIds
-          .map(id => `'${id}'`)
-          .join(",")})`;
-        const rfqStatusResult = await pool.request().query(rfqStatusQuery);
-        rfqStatuses = rfqStatusResult.recordset.reduce((acc, status) => {
-          acc[status.RfqStatus] = status.Name;
-          return acc;
-        }, {});
-      }
-
-      const rfqsWithCustomerNamesAndSatatusName = rfqList.map(rfq => ({
-        ...rfq,
-        CustomerName: customers[rfq.CustomerId] || null,
-        RfqStatusName: rfqStatuses[rfq.RfqStatus] || null,
-      }));
       return {
-        totalCount,
-        items: rfqsWithCustomerNamesAndSatatusName,
+        totalCount: totalCount,
+        items: rfqs,
       };
     } catch (error) {
-      throw new Error(error.message);
+      console.error("Error fetching RFQ list:", error.message);
+      throw new Error("Failed to fetch RFQ list");
     }
   }
 
   async getRfqById(id) {
-    try {
-      const pool = await sql.connect();
-      const query = `SELECT * FROM Rfqs WHERE Id = ${id}`;
-      const result = await pool.request().query(query);
-      return result.recordset[0];
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    return await handleAsync(async () => {
+      const result = await Rfqs.findByPk(id, {});
+      return result;
+    });
+  }
+
+  async createRfq(rfq) {
+    return await handleAsync(async () => {
+      const result = await Rfqs.create(rfq);
+      return result;
+    });
+  }
+
+  async updateRfq(id, updatedRfq) {
+    return await handleAsync(async () => {
+      const result = await Rfqs.update(updatedRfq, {
+        where: { Id: id },
+      });
+      return result;
+    });
   }
 
   async deleteRfq(id) {
+    const transaction = await sequelize.transaction();
     try {
-      const pool = await sql.connect();
-      console.log("Deleting RFQ with ID: ", id);
+      await RfqFactoryPrices.destroy({
+        where: {
+          RfqFactoryId: {
+            [Sequelize.Op.in]: sequelize.literal(
+              `(SELECT id FROM "RfqFactories" WHERE "RfqId" = ${id})`
+            ),
+          },
+        },
+        transaction,
+      });
+      await RfqFactories.destroy({
+        where: {
+          RfqId: id,
+        },
+        transaction,
+      });
 
-      // first delete related factory prices
-      const deleteFactoryPricesQuery = `DELETE FROM RfqFactoryPrices WHERE RfqFactoryId IN (SELECT Id FROM RfqFactories WHERE RfqId = ${id})`;
-      console.log(
-        "Deleting related factory prices with query: ",
-        deleteFactoryPricesQuery
-      );
-      await pool.request().query(deleteFactoryPricesQuery);
+      await Rfqs.destroy({
+        where: {
+          id: id,
+        },
+        transaction,
+      });
 
-      // then delete related factories
-      const deleteFactoriesQuery = `DELETE FROM RfqFactories WHERE RfqId = ${id}`;
-      console.log(
-        "Deleting related factories with query: ",
-        deleteFactoriesQuery
-      );
-      await pool.request().query(deleteFactoriesQuery);
-
-      // finally delete the RFQ
-      const deleteRfqQuery = `DELETE FROM Rfqs WHERE Id = ${id}`;
-      console.log("Query: ", deleteRfqQuery);
-      await pool.request().query(deleteRfqQuery);
+      await transaction.commit();
     } catch (error) {
       console.error("Error deleting RFQ with ID: ", id, error.message);
+      await transaction.rollback();
       throw new Error(error.message);
     }
   }

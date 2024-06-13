@@ -1,31 +1,65 @@
 // models/Member.model.js
+const { Sequelize, DataTypes } = require("sequelize");
+const { sequelize } = require("../db/connect");
 
-class Member {
-  constructor(
-    id,
-    name,
-    surname,
-    email,
-    username,
-    password,
-    createdAt,
-    isActive,
-    isDeleted,
-    satisElemaniKodu,
-    yoneticiId
-  ) {
-    this.id = id;
-    this.name = name;
-    this.surname = surname;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.createdAt = createdAt;
-    this.isActive = isActive;
-    this.isDeleted = isDeleted;
-    this.satisElemaniKodu = satisElemaniKodu;
-    this.yoneticiId = yoneticiId;
+const Member = sequelize.define(
+  "Member",
+  {
+    Id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    Name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Surname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    CreatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: false,
+    },
+    IsActive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      allowNull: false,
+    },
+    IsDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    SatisElemaniKodu: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    YoneticiId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
   }
-}
+);
+
+// relationships
 
 module.exports = Member;

@@ -1,158 +1,331 @@
-//OrderList model mssql
-class OrderList {
-  constructor(
-    Id,
-    Gerber,
-    OdakCode,
-    OrderNumber,
-    CustomerCode,
-    OdakOrderNumber,
-    TeslimatTarihi,
-    ShipmentDate,
-    ShipmentRate,
-    ShipmentType,
-    Layers,
-    Ccl,
-    CclThickness,
-    CopperThickness,
-    Finishing,
-    LpiColorTop,
-    LpiColorBot,
-    LegendPrintTop,
-    LegendPrintBot,
-    SpecialPrints1,
-    SpecialPrints2,
-    SpecialProcess1,
-    SpecialProcess2,
-    SpecialProcess3,
-    SpecialProcess4,
-    SpecialProcess5,
-    SpecialProcess6,
-    PanelSizeX,
-    PanelSizeY,
-    PanelX,
-    Panelization,
-    PanelY,
-    VCutRemainingThickness,
-    VCutTolerance,
-    Amount,
-    OrderM2,
-    OrderTotal,
-    IthalatMasraf,
-    TotalMaliyet,
-    Fiyat,
-    ETest,
-    Tooling,
-    OnayTarihi,
-    FilmDurumu,
-    Status,
-    Note,
-    FabrikayaGiris,
-    Remark,
-    TahminiVaris,
-    DefectRejectionRepair,
-    RejectionRepair,
-    DefectedQuantitiy,
-    m2,
-    CustomerId,
-    FactoryId,
-    CreatedAt,
-    CreatedBy,
-    RepeatOfGerber,
-    Profit,
-    DataStatus,
-    IsSend,
-    ToolingAlis,
-    m2Birim,
-    m2SatisFiyat,
-    DuzeltmeNotu,
-    DeletedAt,
-    DeletedBy,
-    PcbSizeX,
-    PcbSizeY,
-    SatisElemani,
-    EkAdet1,
-    EkAdet2,
-    EkAdet3,
-    EkAdet4,
-    EkAdet5
-  ) {
-    this.Id = Id;
-    this.Gerber = Gerber;
-    this.OdakCode = OdakCode;
-    this.OrderNumber = OrderNumber;
-    this.CustomerCode = CustomerCode;
-    this.OdakOrderNumber = OdakOrderNumber;
-    this.TeslimatTarihi = TeslimatTarihi;
-    this.ShipmentDate = ShipmentDate;
-    this.ShipmentRate = ShipmentRate;
-    this.ShipmentType = ShipmentType;
-    this.Layers = Layers;
-    this.Ccl = Ccl;
-    this.CclThickness = CclThickness;
-    this.CopperThickness = CopperThickness;
-    this.Finishing = Finishing;
-    this.LpiColorTop = LpiColorTop;
-    this.LpiColorBot = LpiColorBot;
-    this.LegendPrintTop = LegendPrintTop;
-    this.LegendPrintBot = LegendPrintBot;
-    this.SpecialPrints1 = SpecialPrints1;
-    this.SpecialPrints2 = SpecialPrints2;
-    this.SpecialProcess1 = SpecialProcess1;
-    this.SpecialProcess2 = SpecialProcess2;
-    this.SpecialProcess3 = SpecialProcess3;
-    this.SpecialProcess4 = SpecialProcess4;
-    this.SpecialProcess5 = SpecialProcess5;
-    this.SpecialProcess6 = SpecialProcess6;
-    this.PanelSizeX = PanelSizeX;
-    this.PanelSizeY = PanelSizeY;
-    this.PanelX = PanelX;
-    this.Panelization = Panelization;
-    this.PanelY = PanelY;
-    this.VCutRemainingThickness = VCutRemainingThickness;
-    this.VCutTolerance = VCutTolerance;
-    this.Amount = Amount;
-    this.OrderM2 = OrderM2;
-    this.OrderTotal = OrderTotal;
-    this.IthalatMasraf = IthalatMasraf;
-    this.TotalMaliyet = TotalMaliyet;
-    this.Fiyat = Fiyat;
-    this.ETest = ETest;
-    this.Tooling = Tooling;
-    this.OnayTarihi = OnayTarihi;
-    this.FilmDurumu = FilmDurumu;
-    this.Status = Status;
-    this.Note = Note;
-    this.FabrikayaGiris = FabrikayaGiris;
-    this.Remark = Remark;
-    this.TahminiVaris = TahminiVaris;
-    this.DefectRejectionRepair = DefectRejectionRepair;
-    this.RejectionRepair = RejectionRepair;
-    this.DefectedQuantitiy = DefectedQuantitiy;
-    this.m2 = m2;
-    this.CustomerId = CustomerId;
-    this.FactoryId = FactoryId;
-    this.CreatedAt = CreatedAt;
-    this.CreatedBy = CreatedBy;
-    this.RepeatOfGerber = RepeatOfGerber;
-    this.Profit = Profit;
-    this.DataStatus = DataStatus;
-    this.IsSend = IsSend;
-    this.ToolingAlis = ToolingAlis;
-    this.m2Birim = m2Birim;
-    this.m2SatisFiyat = m2SatisFiyat;
-    this.DuzeltmeNotu = DuzeltmeNotu;
-    this.DeletedAt = DeletedAt;
-    this.DeletedBy = DeletedBy;
-    this.PcbSizeX = PcbSizeX;
-    this.PcbSizeY = PcbSizeY;
-    this.SatisElemani = SatisElemani;
-    this.EkAdet1 = EkAdet1;
-    this.EkAdet2 = EkAdet2;
-    this.EkAdet3 = EkAdet3;
-    this.EkAdet4 = EkAdet4;
-    this.EkAdet5 = EkAdet5;
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../db/connect");
+const Factories = require("./Factories.model");
+const Customers = require("./Customers.model");
+
+const OrderList = sequelize.define(
+  "OrderList",
+  {
+    Id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    Gerber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OdakCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OrderNumber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    CustomerCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OdakOrderNumber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    TeslimatTarihi: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    ShipmentDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    ShipmentRate: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    ShipmentType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Layers: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Ccl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    CclThickness: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    CopperThickness: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Finishing: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    LpiColorTop: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    LpiColorBot: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    LegendPrintTop: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    LegendPrintBot: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialPrints1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialPrints2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialProcess1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialProcess2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialProcess3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialProcess4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialProcess5: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SpecialProcess6: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    PanelSizeX: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    PanelSizeY: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    PanelX: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Panelization: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    PanelY: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    VCutRemainingThickness: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    VCutTolerance: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Amount: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OrderM2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OrderTotal: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    IthalatMasraf: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    TotalMaliyet: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Fiyat: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    ETest: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Tooling: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    OnayTarihi: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    FilmDurumu: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Status: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Note: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    FabrikayaGiris: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    Remark: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    TahminiVaris: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    Defect: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    RejectionRepair: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    DefectedQuantitiy: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    m2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    CustomerId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Customers",
+        key: "Id",
+      },
+    },
+    FactoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Factories",
+        key: "Id",
+      },
+    },
+    CreatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    CreatedBy: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    RepeatOfGerber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Profit: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    DataStatus: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    IsSend: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    ToolingAlis: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    m2Birim: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    m2SatisFiyat: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    DuzeltmeNotu: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    DeletedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    DeletedBy: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    PcbSizeX: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    PcbSizeY: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    SatisElemani: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    EkAdet1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    EkAdet2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    EkAdet3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    EkAdet4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    EkAdet5: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  },
+  {
+    timestamps: false,
+    freezeTableName: true,
   }
-}
+);
+
+Factories.hasMany(OrderList, { foreignKey: "FactoryId" });
+OrderList.belongsTo(Factories, { foreignKey: "FactoryId" });
+
+Customers.hasMany(OrderList, { foreignKey: "CustomerId" });
+OrderList.belongsTo(Customers, { foreignKey: "CustomerId" });
 
 module.exports = OrderList;

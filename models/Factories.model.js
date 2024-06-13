@@ -1,15 +1,42 @@
-class Factories {
-  // Id, Name, CreatedAt, Username, Password, LastLogin
+const { Sequelize, DataTypes } = require("sequelize");
+const { sequelize } = require("../db/connect");
+// Id, Name, CreatedAt, Username, Password, LastLogin
 
-  constructor(id, name, createdAt, username, password, lastLogin) {
-    this.id = id;
-    this.name = name;
-    this.createdAt = createdAt || new Date();
-    this.username = username || null;
-    this.password = password || null;
-    this.lastLogin = lastLogin || null;
+const Factories = sequelize.define(
+  "Factories",
+  {
+    Id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    Name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    CreatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: false,
+    },
+    Username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    LastLogin: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: false,
+    },
+  },
+  {
+    tableName: "Factories",
+    timestamps: false,
   }
-
-}
+);
 
 module.exports = Factories;

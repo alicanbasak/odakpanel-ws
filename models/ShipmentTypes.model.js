@@ -1,12 +1,33 @@
-class ShipmentTypes {
-  // id, ShipmentType, ShipmentRate, UpdatedAt,
-  constructor(id, shipmentType, shipmentRate, updatedAt) {
-    this.id = id;
-    this.shipmentType = shipmentType;
-    this.shipmentRate = shipmentRate;
-    this.updatedAt = updatedAt;
+const { Sequelize, DataTypes } = require("sequelize");
+const { sequelize } = require("../db/connect");
 
+// id, ShipmentType, ShipmentRate, UpdatedAt,
+
+const ShipmentTypes = sequelize.define(
+  "ShipmentTypes",
+  {
+    Id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    ShipmentType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ShipmentRate: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    UpdatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: false,
   }
-}
+);
 
 module.exports = ShipmentTypes;

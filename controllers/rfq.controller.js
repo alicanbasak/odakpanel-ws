@@ -5,9 +5,12 @@ async function getRfqList(req, res) {
     let { page, pageSize, search } = req.query;
     page = parseInt(page) || 1;
     pageSize = parseInt(pageSize) || 10;
-    const rfqList = await rfqService.getRfqList(page, pageSize, search);
-    res.json(rfqList);
+
+    const rfqs = await rfqService.getRfqList(page, pageSize, search);
+
+    res.json(rfqs);
   } catch (error) {
+    console.error("Error fetching RFQ list:", error);
     res.status(500).json({ message: error.message });
   }
 }
