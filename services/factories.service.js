@@ -1,4 +1,3 @@
-const sql = require("mssql");
 const handleAsync = require("../handlers/asyncHandler");
 const Factories = require("../models/Factories.model");
 

@@ -48,7 +48,7 @@ class RfqService {
 
   async getRfqById(id) {
     return await handleAsync(async () => {
-      const result = await Rfqs.findByPk(id, {});
+      const result = await Rfqs.findByPk(id);
       return result;
     });
   }
