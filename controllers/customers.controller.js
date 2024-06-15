@@ -1,10 +1,10 @@
 const handleAsync = require("../handlers/asyncHandler");
 const customersService = require("../services/customers.service");
 
-async function getAllCustomers(req, res) {
-  const customers = await handleAsync(() => customersService.getAllCustomers());
-  res.json(customers);
-}
+const getAllCustomers = handleAsync(async () => {
+  const customers = await customersService.getAllCustomers();
+  return customers;
+});
 
 module.exports = {
   getAllCustomers,
