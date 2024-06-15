@@ -1,40 +1,35 @@
 const memberService = require("../services/member.service");
 const handleAsync = require("../handlers/asyncHandler");
 
-async function getAllMembers(req, res) {
-  const members = await handleAsync(memberService.getAllMembers);
+const getAllMembers = handleAsync(async function (req, res) {
+  const members = await memberService.getAllMembers();
   res.json(members);
-}
+});
 
-async function getMemberById(req, res) {
+const getMemberById = handleAsync(async function (req, res) {
   const { id } = req.params;
-  const member = await handleAsync(() => memberService.getMemberById(id));
-  if (!member) {
-    return res.status(404).json({ error: "Member not found" });
-  }
+  const member = await memberService.getMemberById(id);
   res.json(member);
-}
+});
 
-async function createMember(req, res) {
-  const member = req.body;
-  const result = await handleAsync(() => memberService.createMember(member));
-  res.json(result);
-}
+const createMember = handleAsync(async function (req, res) {
+  const newMember = req.body;
+  const member = await memberService.createMember(newMember);
+  res.json(member);
+});
 
-async function updateMember(req, res) {
+const updateMember = handleAsync(async function (req, res) {
   const { id } = req.params;
   const updatedMember = req.body;
-  const updatedCount = await handleAsync(() =>
-    memberService.updateMember(id, updatedMember)
-  );
-  res.json({ updatedCount });
-}
+  const member = await memberService.updateMember(id, updatedMember);
+  res.json(member);
+});
 
-async function deleteMember(req, res) {
+const deleteMember = handleAsync(async function (req, res) {
   const { id } = req.params;
-  const deletedCount = await handleAsync(() => memberService.deleteMember(id));
-  res.json({ deletedCount });
-}
+  const member = await memberService.deleteMember(id);
+  res.json(member);
+});
 
 module.exports = {
   getAllMembers,
