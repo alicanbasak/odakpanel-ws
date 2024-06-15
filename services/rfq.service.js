@@ -22,7 +22,7 @@ class RfqService {
       "CustomerCode",
       "OdakOrderNumber",
     ];
-    // buildWhereClauses fonksiyonunu kullanarak where koşullarını oluşturun
+
     const whereClauses = buildWhereClauses(search, searchFields);
 
     const totalCount = await countRecords(Rfqs, whereClauses);
