@@ -1,17 +1,20 @@
 const { Op } = require("sequelize");
 
-const buildWhereClauses = search => {
-  if (!search) return {};
+const buildWhereClauses = (search, fields) => {
+  if (!search || !Array.isArray(fields) || fields.length === 0) return {};
+
+  const validFields = fields.filter(
+    field => typeof field === "string" && field.trim() !== ""
+  );
+
+  if (validFields.length === 0) return {};
+
+  const clauses = validFields.map(field => ({
+    [field]: { [Op.like]: `%${search}%` },
+  }));
 
   return {
-    [Op.or]: [
-      { Id: { [Op.like]: `%${search}%` } },
-      { Gerber: { [Op.like]: `%${search}%` } },
-      { OdakCode: { [Op.like]: `%${search}%` } },
-      { OrderNumber: { [Op.like]: `%{search}%` } },
-      { CustomerCode: { [Op.like]: `%{search}%` } },
-      { OdakOrderNumber: { [Op.like]: `%{search}%` } },
-    ],
+    [Op.or]: clauses,
   };
 };
 

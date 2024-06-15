@@ -30,7 +30,16 @@ class OrderService {
     dataWillBeSend
   ) {
     const offset = (page - 1) * pageSize;
-    const whereClauses = buildWhereClauses(search);
+
+    const searchFields = [
+      "Id",
+      "Gerber",
+      "OdakCode",
+      "OrderNumber",
+      "CustomerCode",
+      "OdakOrderNumber",
+    ];
+    const whereClauses = buildWhereClauses(search, searchFields);
 
     addWhereClause(whereClauses, "FactoryId", factoryId);
     addWhereClause(whereClauses, "CustomerId", customerId);
