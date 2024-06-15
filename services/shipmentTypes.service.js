@@ -1,12 +1,9 @@
-const handleAsync = require("../handlers/asyncHandler");
 const ShipmentTypes = require("../models/ShipmentTypes.model");
+const { findAllRecords } = require("../utils/crudHelper");
 
 class ShipmentTypesService {
   async getAllShipmentTypes() {
-    return await handleAsync(async () => {
-      const result = await ShipmentTypes.findAll();
-      return result;
-    });
+    return await findAllRecords(ShipmentTypes);
   }
 }
 

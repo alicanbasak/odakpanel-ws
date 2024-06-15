@@ -1,11 +1,11 @@
-const handleAsync = require('../handlers/asyncHandler');
-const shipmentTypesService = require('../services/shipmentTypes.service');
+const handleAsync = require("../handlers/asyncHandler");
+const shipmentTypesService = require("../services/shipmentTypes.service");
 
-async function getAllShipmentTypes(req, res) {
-  const shipmentTypes = await handleAsync(() => shipmentTypesService.getAllShipmentTypes());
-  res.json(shipmentTypes);
-}
+const getAllShipmentTypes = handleAsync(async () => {
+  const shipmentTypes = await shipmentTypesService.getAllShipmentTypes();
+  return shipmentTypes;
+});
 
 module.exports = {
   getAllShipmentTypes,
-}
+};
