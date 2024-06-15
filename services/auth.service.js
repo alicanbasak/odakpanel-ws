@@ -1,7 +1,7 @@
 const Member = require("../models/member.model");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
-const { findRecordByField } = require("../utils/crudHelper");
+const { findRecordByField, updateRecord } = require("../utils/crudHelper");
 
 class AuthService {
   async loginUser(username, password) {
@@ -29,6 +29,38 @@ class AuthService {
       "jwtSecretKey",
       { expiresIn: "24h" }
     );
+  }
+
+  isAccountOwner(userId, profileId) {
+    if (userId !== profileId) {
+      return false;
+    }
+    return true;
+  }
+
+  async getProfile(userId, profileId) {
+    isAccountOwner(userId, profileId);
+    return await findRecordByField(Member, "Id", profileId);
+  }
+
+  async updatePassword(userId, profileId, passwordData) {
+    isAccountOwner(userId, profileId);
+    const user = await findRecordByField(Member, "Id", profileId);
+    if (!this.validatePassword(passwordData.OldPassword, user.Password)) {
+      throw new Error("Invalid password");
+    }
+    user.Password = crypto
+      .createHash("sha1")
+      .update(passwordData.NewPassword)
+      .digest("hex");
+
+    return await updateRecord(Member, profileId, user);
+  }
+
+  async updateProfile(userId, profileId) {
+    isAccountOwner(userId, profileId);
+    const user = await findRecordByField(Member, "Id", profileId);
+    return await updateRecord(Member, profileId, user);
   }
 }
 
