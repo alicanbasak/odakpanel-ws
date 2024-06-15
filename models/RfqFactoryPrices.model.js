@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../db/connect");
+const { sequelize } = require("../initializers/db");
 const Factories = require("./Factories.model");
 
 const RfqFactoryPrices = sequelize.define(

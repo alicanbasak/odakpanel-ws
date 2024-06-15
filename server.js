@@ -1,8 +1,7 @@
 const express = require("express");
-const { connectDatabase, disconnectDatabase } = require("./db/connect");
+const { connectDatabase, disconnectDatabase } = require("./initializers/db");
 const cors = require("cors");
-const router = require("./routes/index.route"); // Yeni dinamik route yükleyici dosyası
-
+const router = require("./initializers/routes");
 const app = express();
 const PORT = process.env.PORT || 8080;
 

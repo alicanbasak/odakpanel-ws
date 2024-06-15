@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const { sequelize } = require("../db/connect");
+const { sequelize } = require("../initializers/db");
 // Id, Name, CreatedAt, Username, Password, LastLogin
 
 const Factories = sequelize.define(

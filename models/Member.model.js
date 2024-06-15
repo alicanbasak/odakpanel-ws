@@ -1,6 +1,6 @@
 // models/Member.model.js
 const { Sequelize, DataTypes } = require("sequelize");
-const { sequelize } = require("../db/connect");
+const { sequelize } = require("../initializers/db");
 
 const Member = sequelize.define(
   "Member",
@@ -59,7 +59,5 @@ const Member = sequelize.define(
     freezeTableName: true,
   }
 );
-
-// relationships
 
 module.exports = Member;

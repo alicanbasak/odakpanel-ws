@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const { sequelize } = require("../db/connect");
+const { sequelize } = require("../initializers/db");
 
 const Customers = sequelize.define(
   "Customers",

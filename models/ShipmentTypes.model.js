@@ -1,6 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
-const { sequelize } = require("../db/connect");
-
+const { sequelize } = require("../initializers/db");
 // id, ShipmentType, ShipmentRate, UpdatedAt,
 
 const ShipmentTypes = sequelize.define(

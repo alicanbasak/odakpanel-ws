@@ -1,5 +1,5 @@
 const { QueryTypes } = require("sequelize");
-const { sequelize } = require("../db/connect");
+const { sequelize } = require("../initializers/db");
 const createRecord = async (model, data) => {
   return await model.create(data);
 };
