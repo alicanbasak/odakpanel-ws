@@ -1,12 +1,11 @@
-const handleAsync = require('../handlers/asyncHandler')
-const distinctService = require('../services/distinct.service')
+const handleAsync = require("../handlers/asyncHandler");
+const distinctService = require("../services/distinct.service");
 
-const getLayers = async (req, res) => {
-  const layers = await handleAsync(() => distinctService.getDistinct('OrderList', 'Layers'))
-  res.json(layers)
-}
-
+const getLayers = handleAsync(async () => {
+  const result = await distinctService.getDistinct("OrderList", "Layers");
+  return result;
+});
 
 module.exports = {
   getLayers,
-}
+};

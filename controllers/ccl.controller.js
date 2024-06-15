@@ -1,12 +1,11 @@
-const handleAsync = require('../handlers/asyncHandler')
-const distinctService = require('../services/distinct.service')
+const handleAsync = require("../handlers/asyncHandler");
+const distinctService = require("../services/distinct.service");
 
-const getCcl = async (req, res) => {
-  const ccl = await handleAsync(() => distinctService.getDistinct('OrderList', 'Ccl'))
-  res.json(ccl)
-}
+const getCcl = handleAsync(async () => {
+  const result = await distinctService.getDistinct("OrderList", "Ccl");
+  return result;
+});
 
 module.exports = {
   getCcl,
-  
-}
+};

@@ -1,16 +1,9 @@
-const { QueryTypes } = require("sequelize");
-const handleAsync = require("../handlers/asyncHandler");
-const { sequelize } = require("../db/connect");
+const { distinctRecords } = require("../utils/crudHelper");
 
 class DistinctService {
   async getDistinct(tableName, columnName) {
-    return await handleAsync(async () => {
-      const query = `SELECT DISTINCT ${columnName} FROM ${tableName}`;
-      const result = await sequelize.query(query, {
-        type: QueryTypes.SELECT,
-      });
-      return result;
-    });
+    const result = await distinctRecords(columnName, tableName);
+    return result;
   }
 }
 
