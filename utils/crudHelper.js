@@ -1,3 +1,5 @@
+const { QueryTypes } = require("sequelize");
+const { sequelize } = require("../db/connect");
 const createRecord = async (model, data) => {
   return await model.create(data);
 };
@@ -25,6 +27,20 @@ const findAllRecords = async (model, options) => {
   return await model.findAll(options);
 };
 
+const distinctRecords = async (columnName, tableName) => {
+  const query = `SELECT DISTINCT ${columnName} FROM ${tableName}`;
+  const result = await sequelize.query(query, {
+    type: QueryTypes.SELECT,
+  });
+  return result;
+};
+
+const findRecordByField = async (model, field, value) => {
+  return await model.findOne({
+    where: { [field]: value },
+  });
+};
+
 module.exports = {
   createRecord,
   findRecordById,
@@ -32,4 +48,6 @@ module.exports = {
   deleteRecord,
   countRecords,
   findAllRecords,
+  distinctRecords,
+  findRecordByField,
 };
