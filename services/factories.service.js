@@ -1,12 +1,9 @@
-const handleAsync = require("../handlers/asyncHandler");
 const Factories = require("../models/Factories.model");
+const { findAllRecords } = require("../utils/crudHelper");
 
 class FactoryService {
   async getAllFactories() {
-    return await handleAsync(async () => {
-      const factories = await Factories.findAll();
-      return factories;
-    });
+    return await findAllRecords(Factories);
   }
 }
 

@@ -1,11 +1,11 @@
-const handleAsync = require('../handlers/asyncHandler');
-const factoriesService = require('../services/factories.service');
+const handleAsync = require("../handlers/asyncHandler");
+const factoriesService = require("../services/factories.service");
 
-async function getAllFactories(req, res) {
-  const factories = await handleAsync(() => factoriesService.getAllFactories());
-  res.json(factories);
-}
+const getAllFactories = handleAsync(async () => {
+  const factories = await factoriesService.getAllFactories();
+  return factories;
+});
 
 module.exports = {
   getAllFactories,
-}
+};
