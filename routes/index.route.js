@@ -1,5 +1,4 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 
 const routes = [
   { path: "/api/v1/members", route: require("./member.route") },

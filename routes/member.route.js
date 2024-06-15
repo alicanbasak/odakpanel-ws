@@ -1,11 +1,10 @@
-const router = require('express').Router();
-const controller = require('../controllers/member.controller');
+const router = require("express").Router();
+const controller = require("../controllers/member.controller");
 
-router.route('/')
-  .get(controller.getAllMembers)
-  .post(controller.createMember);
+router.route("/").get(controller.getAllMembers).post(controller.createMember);
 
-router.route('/:id')
+router
+  .route("/:id")
   .get(controller.getMemberById)
   .put(controller.updateMember)
   .delete(controller.deleteMember);
