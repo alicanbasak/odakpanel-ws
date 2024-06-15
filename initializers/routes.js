@@ -14,6 +14,7 @@ const routes = [
   { path: "/api/v1/layers", route: require("../routes/layers.route") },
   { path: "/api/v1/status", route: require("../routes/status.route") },
   { path: "/api/v1/rfqs", route: require("../routes/rfq.route") },
+  { path: "/api/v1/invoices", route: require("../routes/invoices.route") },
 ];
 
 routes.forEach(({ path, route }) => router.use(path, route));
