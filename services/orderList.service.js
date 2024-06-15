@@ -78,10 +78,8 @@ class OrderService {
         { OdakOrderNumber: { [Op.like]: `%${search}%` } },
       ];
     }
-
-    try {
-      const totalCount = await OrderList.count({ where: whereClauses });
-
+    const totalCount = await OrderList.count({ where: whereClauses });
+    return await handleAsync(async () => {
       const orders = await OrderList.findAll({
         where: whereClauses,
         include: [
@@ -102,9 +100,7 @@ class OrderService {
         totalCount: totalCount,
         items: ordersWithCustomerNames,
       };
-    } catch (error) {
-      throw new Error("Failed to fetch orders");
-    }
+    });
   }
 
   async getOrderById(id) {

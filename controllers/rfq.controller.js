@@ -1,74 +1,55 @@
 const rfqService = require("../services/rfq.service");
+const handleAsync = require("../handlers/asyncHandler");
 
-async function getRfqList(req, res) {
-  try {
-    let { page, pageSize, search } = req.query;
-    page = parseInt(page) || 1;
-    pageSize = parseInt(pageSize) || 10;
+const getRfqList = handleAsync(async (req, res) => {
+  let { page, pageSize, search } = req.query;
+  page = parseInt(page) || 1;
+  pageSize = parseInt(pageSize) || 10;
 
-    const rfqs = await rfqService.getRfqList(page, pageSize, search);
+  const rfqs = await rfqService.getRfqList(page, pageSize, search);
+  return rfqs;
+});
 
-    res.json(rfqs);
-  } catch (error) {
-    console.error("Error fetching RFQ list:", error);
-    res.status(500).json({ message: error.message });
+const getRfqById = handleAsync(async (req, res) => {
+  const { id } = req.params;
+  const rfq = await rfqService.getRfqById(id);
+  return rfq;
+});
+
+const deleteRfq = handleAsync(async (req, res) => {
+  const { id } = req.params;
+  await rfqService.deleteRfq(id);
+  return { message: "RFQ deleted successfully" };
+});
+
+const deleteMultipleRfqs = handleAsync(async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "IDs must be provided as an array" });
   }
-}
 
-async function getRfqById(req, res) {
-  try {
-    const { id } = req.params;
-    const rfq = await rfqService.getRfqById(id);
-    res.json(rfq);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+  const results = await Promise.all(
+    ids.map(async id => {
+      try {
+        await rfqService.deleteRfq(id);
+        return { id, message: "RFQ deleted successfully" };
+      } catch (error) {
+        console.error("Error deleting RFQ with ID:", id, error);
+        return { id, message: "Error deleting RFQ" };
+      }
+    })
+  );
 
-async function deleteRfq(req, res) {
-  try {
-    const { id } = req.params;
-    await rfqService.deleteRfq(id);
-    res.json({ message: "RFQ deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+  return {
+    statusCode: 200,
+    message: "Multiple RFQs deleted successfully",
+    results,
+  };
+});
 
-async function deleteMultipleRfqs(req, res) {
-  try {
-    const { ids } = req.body; // Birden fazla ID'yi içeren bir dizi bekliyoruz
-
-    console.log("Received IDs for deletion:", ids);
-
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "IDs must be provided as an array" });
-    }
-
-    const results = await Promise.all(
-      ids.map(async id => {
-        try {
-          await rfqService.deleteRfq(id);
-          return { id, message: "RFQ deleted successfully" };
-        } catch (error) {
-          console.error("Error deleting RFQ with ID:", id, error.message);
-          return { id, message: "Error deleting RFQ" };
-        }
-      })
-    );
-
-    res.json({
-      statusCode: 200,
-      message: "Multiple RFQs deleted successfully",
-      results,
-    });
-  } catch (error) {
-    console.error("Error in deleteMultipleRfqs:", error.message);
-    res.status(500).json({ message: error.message });
-  }
-}
 module.exports = {
   getRfqList,
   getRfqById,

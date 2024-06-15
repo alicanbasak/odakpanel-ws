@@ -1,107 +1,53 @@
-const handleAsync = require("../handlers/asyncHandler");
+const buildWhereClauses = require("../utils/whereClausesBuilder");
 const Factories = require("../models/Factories.model");
 const Customers = require("../models/Customers.model");
 const Rfqs = require("../models/Rfqs.model");
-const RfqFactories = require("../models/RfqFactories.model");
-const RfqFactoryPrices = require("../models/RfqFactoryPrices.model");
-const { literal, Op } = require("sequelize");
+const {
+  createRecord,
+  findRecordById,
+  updateRecord,
+  deleteRecord,
+  countRecords,
+  findAllRecords,
+} = require("../utils/crudHelper");
 
 class RfqService {
   async getRfqList(page = 1, pageSize = 10, search) {
     const offset = (page - 1) * pageSize;
-    const whereClauses = {};
+    const whereClauses = buildWhereClauses(search);
 
-    if (search) {
-      whereClauses[Op.or] = [
-        { Id: { [Op.like]: `%${search}%` } },
-        { Gerber: { [Op.like]: `%${search}%` } },
-        { OdakCode: { [Op.like]: `%${search}%` } },
-        { OrderNumber: { [Op.like]: `%${search}%` } },
-        { CustomerCode: { [Op.like]: `%${search}%` } },
-        { OdakOrderNumber: { [Op.like]: `%${search}%` } },
-      ];
-    }
+    const totalCount = await countRecords(Rfqs, whereClauses);
 
-    try {
-      const totalCount = await Rfqs.count({ where: whereClauses });
+    const rfqs = await findAllRecords(Rfqs, {
+      where: whereClauses,
+      include: [
+        { model: Factories, attributes: ["Name"] },
+        { model: Customers, attributes: ["Name"] },
+      ],
+      offset: offset,
+      limit: pageSize,
+      order: [["Id", "DESC"]],
+    });
 
-      const rfqs = await Rfqs.findAll({
-        where: whereClauses,
-        include: [
-          { model: Factories, attributes: ["Name"] },
-          { model: Customers, attributes: ["Name"] },
-        ],
-        offset: offset,
-        limit: pageSize,
-        order: [["Id", "DESC"]],
-      });
-
-      return {
-        totalCount: totalCount,
-        items: rfqs,
-      };
-    } catch (error) {
-      console.error("Error fetching RFQ list:", error.message);
-      throw new Error("Failed to fetch RFQ list");
-    }
+    return {
+      totalCount: totalCount,
+      items: rfqs,
+    };
   }
 
   async getRfqById(id) {
-    return await handleAsync(async () => {
-      const result = await Rfqs.findByPk(id);
-      return result;
-    });
+    return await findRecordById(Rfqs, id);
   }
 
   async createRfq(rfq) {
-    return await handleAsync(async () => {
-      const result = await Rfqs.create(rfq);
-      return result;
-    });
+    return await createRecord(Rfqs, rfq);
   }
 
   async updateRfq(id, updatedRfq) {
-    return await handleAsync(async () => {
-      const result = await Rfqs.update(updatedRfq, {
-        where: { Id: id },
-      });
-      return result;
-    });
+    return await updateRecord(Rfqs, id, updatedRfq);
   }
-
   async deleteRfq(id) {
-    const transaction = await sequelize.transaction();
-    try {
-      await RfqFactoryPrices.destroy({
-        where: {
-          RfqFactoryId: {
-            [Sequelize.Op.in]: sequelize.literal(
-              `(SELECT id FROM "RfqFactories" WHERE "RfqId" = ${id})`
-            ),
-          },
-        },
-        transaction,
-      });
-      await RfqFactories.destroy({
-        where: {
-          RfqId: id,
-        },
-        transaction,
-      });
-
-      await Rfqs.destroy({
-        where: {
-          id: id,
-        },
-        transaction,
-      });
-
-      await transaction.commit();
-    } catch (error) {
-      console.error("Error deleting RFQ with ID: ", id, error.message);
-      await transaction.rollback();
-      throw new Error(error.message);
-    }
+    return await deleteRecord(Rfqs, id);
   }
 }
 
