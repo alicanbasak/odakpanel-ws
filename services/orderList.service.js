@@ -1,8 +1,17 @@
-const handleAsync = require("../handlers/asyncHandler");
 const OrderList = require("../models/OrderList.model");
 const Factories = require("../models/Factories.model");
 const Customers = require("../models/Customers.model");
-const { literal, Op } = require("sequelize");
+const { Op, literal } = require("sequelize");
+const {
+  createRecord,
+  findRecordById,
+  updateRecord,
+  deleteRecord,
+  countRecords,
+  findAllRecords,
+} = require("../utils/crudHelper");
+const buildWhereClauses = require("../utils/whereClausesBuilder");
+const addWhereClause = require("../utils/addWhereClause");
 
 class OrderService {
   async getAllOrders(
@@ -21,28 +30,14 @@ class OrderService {
     dataWillBeSend
   ) {
     const offset = (page - 1) * pageSize;
-    const whereClauses = {};
+    const whereClauses = buildWhereClauses(search);
 
-    const addWhereClause = (
-      field,
-      value,
-      isString = false,
-      exclude = false
-    ) => {
-      if (value && value.length > 0) {
-        const valueList = isString ? value.split(",") : value;
-        whereClauses[field] = exclude
-          ? { [Op.notIn]: valueList }
-          : { [Op.in]: valueList };
-      }
-    };
-
-    addWhereClause("FactoryId", factoryId);
-    addWhereClause("CustomerId", customerId);
-    addWhereClause("ShipmentType", shipmentType, true);
-    addWhereClause("Layers", layers, true);
-    addWhereClause("Ccl", ccl, true);
-    addWhereClause("Status", status, true);
+    addWhereClause(whereClauses, "FactoryId", factoryId);
+    addWhereClause(whereClauses, "CustomerId", customerId);
+    addWhereClause(whereClauses, "ShipmentType", shipmentType, true);
+    addWhereClause(whereClauses, "Layers", layers, true);
+    addWhereClause(whereClauses, "Ccl", ccl, true);
+    addWhereClause(whereClauses, "Status", status, true);
 
     if (excludeFactoryId) {
       whereClauses["FactoryId"] = { [Op.ne]: excludeFactoryId };
@@ -68,71 +63,43 @@ class OrderService {
       ];
     }
 
-    if (search) {
-      whereClauses[Op.or] = [
-        { Id: { [Op.like]: `%${search}%` } },
-        { Gerber: { [Op.like]: `%${search}%` } },
-        { OdakCode: { [Op.like]: `%${search}%` } },
-        { OrderNumber: { [Op.like]: `%${search}%` } },
-        { CustomerCode: { [Op.like]: `%${search}%` } },
-        { OdakOrderNumber: { [Op.like]: `%${search}%` } },
-      ];
-    }
-    const totalCount = await OrderList.count({ where: whereClauses });
-    return await handleAsync(async () => {
-      const orders = await OrderList.findAll({
-        where: whereClauses,
-        include: [
-          { model: Factories, attributes: ["Name"] },
-          { model: Customers, attributes: ["Name"] },
-        ],
-        offset: offset,
-        limit: pageSize,
-        order: [["Id", "DESC"]],
-      });
-
-      const ordersWithCustomerNames = orders.map(order => ({
-        ...order.toJSON(),
-        CustomerName: order.Customer ? order.Customer.Name : null,
-      }));
-
-      return {
-        totalCount: totalCount,
-        items: ordersWithCustomerNames,
-      };
+    const totalCount = await countRecords(OrderList, whereClauses);
+    const orders = await findAllRecords(OrderList, {
+      where: whereClauses,
+      include: [
+        { model: Factories, attributes: ["Name"] },
+        { model: Customers, attributes: ["Name"] },
+      ],
+      offset: offset,
+      limit: pageSize,
+      order: [["Id", "DESC"]],
     });
+
+    const ordersWithCustomerNames = orders.map(order => ({
+      ...order.toJSON(),
+      CustomerName: order.Customer ? order.Customer.Name : null,
+    }));
+
+    return {
+      totalCount: totalCount,
+      items: ordersWithCustomerNames,
+    };
   }
 
   async getOrderById(id) {
-    return await handleAsync(async () => {
-      const result = await OrderList.findByPk(id, {
-        include: [Factories, Customers],
-      });
-      return result;
-    });
+    return await findRecordById(OrderList, id);
   }
 
   async createOrder(order) {
-    return await handleAsync(async () => {
-      const result = await OrderList.create(order);
-      return result;
-    });
+    return await createRecord(OrderList, order);
   }
 
   async updateOrder(id, updatedOrder) {
-    return await handleAsync(async () => {
-      const result = await OrderList.update(updatedOrder, {
-        where: { Id: id },
-      });
-      return result;
-    });
+    return await updateRecord(OrderList, id, updatedOrder);
   }
 
   async deleteOrder(id) {
-    return await handleAsync(async () => {
-      const result = await OrderList.destroy({ where: { Id: id } });
-      return result;
-    });
+    return await deleteRecord(OrderList, id);
   }
 }
 

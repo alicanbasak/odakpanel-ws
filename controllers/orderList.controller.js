@@ -1,78 +1,74 @@
-// controllers/order.controller.js
 const orderService = require("../services/orderList.service");
+const handleAsync = require("../handlers/asyncHandler");
 
-async function getAllOrders(req, res) {
-  try {
-    let {
-      page,
-      pageSize,
-      factoryId,
-      customerId,
-      shipmentType,
-      status,
-      ccl,
-      layers,
-      search,
-      excludeFactoryId,
-      orderToBeSent,
-      delay,
-      dataWillBeSend, // Yeni parametre eklendi
-    } = req.query;
+const getAllOrders = handleAsync(async (req, res) => {
+  let {
+    page,
+    pageSize,
+    factoryId,
+    customerId,
+    shipmentType,
+    status,
+    ccl,
+    layers,
+    search,
+    excludeFactoryId,
+    orderToBeSent,
+    delay,
+    dataWillBeSend,
+  } = req.query;
 
-    page = parseInt(page) || 1;
-    pageSize = parseInt(pageSize) || 10;
-    factoryId = factoryId ? factoryId.split(",") : [];
-    customerId = customerId ? customerId.split(",") : [];
+  page = parseInt(page) || 1;
+  pageSize = parseInt(pageSize) || 10;
+  factoryId = factoryId ? factoryId.split(",") : [];
+  customerId = customerId ? customerId.split(",") : [];
 
-    const orders = await orderService.getAllOrders(
-      page,
-      pageSize,
-      factoryId,
-      customerId,
-      shipmentType,
-      status,
-      ccl,
-      layers,
-      search,
-      excludeFactoryId,
-      orderToBeSent,
-      delay,
-      dataWillBeSend
-    );
+  const orders = await orderService.getAllOrders(
+    page,
+    pageSize,
+    factoryId,
+    customerId,
+    shipmentType,
+    status,
+    ccl,
+    layers,
+    search,
+    excludeFactoryId,
+    orderToBeSent,
+    delay,
+    dataWillBeSend
+  );
 
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
+  return orders;
+});
 
-async function getOrderById(req, res) {
+const getOrderById = handleAsync(async (req, res) => {
   const { id } = req.params;
   const order = await orderService.getOrderById(id);
   if (!order) {
-    return res.status(404).json({ error: "Order not found" });
+    throw new Error("Order not found");
   }
-  res.json(order);
-}
+  return order;
+});
 
-async function createOrder(req, res) {
+const createOrder = handleAsync(async (req, res) => {
   const order = req.body;
   const result = await orderService.createOrder(order);
-  res.json(result);
-}
+  return result;
+});
 
-async function updateOrder(req, res) {
+const updateOrder = handleAsync(async (req, res) => {
   const { id } = req.params;
   const updatedOrder = req.body;
   const updatedCount = await orderService.updateOrder(id, updatedOrder);
-  res.json({ updatedCount });
-}
+  return { updatedCount };
+});
 
-async function deleteOrder(req, res) {
+const deleteOrder = handleAsync(async (req, res) => {
   const { id } = req.params;
   const deletedCount = await orderService.deleteOrder(id);
-  res.json({ deletedCount });
-}
+  return { deletedCount };
+});
 
 module.exports = {
   getAllOrders,
