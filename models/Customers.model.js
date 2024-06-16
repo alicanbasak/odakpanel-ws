@@ -20,7 +20,7 @@ const Customers = sequelize.define(
     },
   },
   {
-    tableName: "Customers",
+    freezeTableName: true,
     timestamps: false,
   }
 );
