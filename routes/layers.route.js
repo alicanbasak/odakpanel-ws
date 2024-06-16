@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const layersController = require("../controllers/layers.controller");
+const controller = require("../controllers/layers.controller");
 
-router.get("/", layersController.getLayers);
+router.get("/", controller.getLayers);
 
 module.exports = router;

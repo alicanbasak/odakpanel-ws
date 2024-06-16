@@ -16,6 +16,19 @@ const getRfqById = handleAsync(async (req, res) => {
   return rfq;
 });
 
+const createRfq = handleAsync(async (req, res) => {
+  const rfq = req.body;
+  const newRfq = await rfqService.createRfq(rfq);
+  return newRfq;
+});
+
+const updateRfq = handleAsync(async (req, res) => {
+  const { id } = req.params;
+  const updatedRfq = req.body;
+  const rfq = await rfqService.updateRfq(id, updatedRfq);
+  return rfq;
+});
+
 const deleteRfq = handleAsync(async (req, res) => {
   const { id } = req.params;
   await rfqService.deleteRfq(id);
@@ -54,5 +67,7 @@ module.exports = {
   getRfqList,
   getRfqById,
   deleteRfq,
+  createRfq,
   deleteMultipleRfqs,
+  updateRfq,
 };

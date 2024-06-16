@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const cclController = require("../controllers/ccl.controller");
+const controller = require("../controllers/ccl.controller");
 
-router.get("/", cclController.getCcl);
+router.get("/", controller.getCcl);
 
 module.exports = router;
