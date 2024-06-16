@@ -1,7 +1,16 @@
 const router = require("express").Router();
 
-const shipmentTypesController = require("../controllers/shipmentTypes.controller");
+const controller = require("../controllers/shipmentTypes.controller");
 
-router.get("/", shipmentTypesController.getAllShipmentTypes);
+router
+  .route("/")
+  .get(controller.getAllShipmentTypes)
+  .post(controller.createShipmentType);
+
+router
+  .route("/:id")
+  .get(controller.getShipmentTypeById)
+  .put(controller.updateShipmentType)
+  .delete(controller.deleteShipmentType);
 
 module.exports = router;
