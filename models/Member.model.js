@@ -53,6 +53,10 @@ const Member = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    RoleId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     timestamps: false,

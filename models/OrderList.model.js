@@ -12,7 +12,7 @@ const OrderList = sequelize.define(
       autoIncrement: true,
     },
     Gerber: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     OdakCode: {
@@ -32,15 +32,15 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     TeslimatTarihi: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
     ShipmentDate: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
     ShipmentRate: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     ShipmentType: {
@@ -144,39 +144,39 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     Amount: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     OrderM2: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     OrderTotal: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     IthalatMasraf: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     TotalMaliyet: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     Fiyat: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     ETest: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     Tooling: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     OnayTarihi: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
     FilmDurumu: {
@@ -192,7 +192,7 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     FabrikayaGiris: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
     Remark: {
@@ -200,7 +200,7 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     TahminiVaris: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
     Defect: {
@@ -236,39 +236,39 @@ const OrderList = sequelize.define(
       },
     },
     CreatedAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
+      type: DataTypes.DATEONLY,
+      allowNull: false,
     },
     CreatedBy: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     RepeatOfGerber: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     Profit: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     DataStatus: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     IsSend: {
-      type: DataTypes.STRING,
+      type: DataTypes.BOOLEAN,
       allowNull: true,
     },
     ToolingAlis: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     m2Birim: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     m2SatisFiyat: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     DuzeltmeNotu: {
@@ -276,7 +276,7 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     DeletedAt: {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: true,
     },
     DeletedBy: {
@@ -284,11 +284,11 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     PcbSizeX: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     PcbSizeY: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL,
       allowNull: true,
     },
     SatisElemani: {
@@ -296,23 +296,27 @@ const OrderList = sequelize.define(
       allowNull: true,
     },
     EkAdet1: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     EkAdet2: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     EkAdet3: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     EkAdet4: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     EkAdet5: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    HasRfq: {
+      type: DataTypes.BOOLEAN,
       allowNull: true,
     },
   },
@@ -328,4 +332,5 @@ OrderList.belongsTo(Factories, { foreignKey: "FactoryId" });
 Customers.hasMany(OrderList, { foreignKey: "CustomerId" });
 OrderList.belongsTo(Customers, { foreignKey: "CustomerId" });
 
+OrderList.sync();
 module.exports = OrderList;

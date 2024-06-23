@@ -1,7 +1,11 @@
 const router = require("express").Router();
 const controller = require("../controllers/orderList.controller");
-
-router.route("/").get(controller.getAllOrders).post(controller.createOrder);
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+router
+  .route("/")
+  .get(controller.getAllOrders)
+  .post(upload.single("file"), controller.createOrder);
 
 router
   .route("/:id")

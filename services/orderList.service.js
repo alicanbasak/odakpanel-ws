@@ -2,16 +2,19 @@ const OrderList = require("../models/OrderList.model");
 const Factories = require("../models/Factories.model");
 const Customers = require("../models/Customers.model");
 const { Op, literal } = require("sequelize");
+
 const {
-  createRecord,
   findRecordById,
   updateRecord,
   deleteRecord,
   countRecords,
   findAllRecords,
+  importRecordsWithExcel,
 } = require("../utils/crudHelper");
 const buildWhereClauses = require("../utils/whereClausesBuilder");
 const addWhereClause = require("../utils/addWhereClause");
+
+// convert date format from excel to sql (excel format: 12/8/2023)
 
 class OrderService {
   async getAllOrders(
@@ -98,9 +101,8 @@ class OrderService {
   async getOrderById(id) {
     return await findRecordById(OrderList, id);
   }
-
-  async createOrder(order) {
-    return await createRecord(OrderList, order);
+  async createOrder(data) {
+    return await importRecordsWithExcel(OrderList, data);
   }
 
   async updateOrder(id, updatedOrder) {

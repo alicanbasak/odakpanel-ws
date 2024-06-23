@@ -13,6 +13,7 @@ class AuthService {
       throw new Error("Invalid password");
     }
     const token = this.generateToken(user);
+
     return { user, token };
   }
 
@@ -32,19 +33,18 @@ class AuthService {
   }
 
   isAccountOwner(userId, profileId) {
-    if (userId !== profileId) {
-      return false;
-    }
-    return true;
+    return userId === profileId;
   }
 
   async getProfile(userId, profileId) {
-    isAccountOwner(userId, profileId);
+    this.isAccountOwner(userId, profileId);
     return await findRecordByField(Member, "Id", profileId);
   }
 
   async updatePassword(userId, profileId, passwordData) {
-    isAccountOwner(userId, profileId);
+    passwordData.NewPassword = undefined;
+    passwordData.OldPassword = undefined;
+    this.isAccountOwner(userId, profileId);
     const user = await findRecordByField(Member, "Id", profileId);
     if (!this.validatePassword(passwordData.OldPassword, user.Password)) {
       throw new Error("Invalid password");
@@ -58,7 +58,7 @@ class AuthService {
   }
 
   async updateProfile(userId, profileId) {
-    isAccountOwner(userId, profileId);
+    this.isAccountOwner(userId, profileId);
     const user = await findRecordByField(Member, "Id", profileId);
     return await updateRecord(Member, profileId, user);
   }

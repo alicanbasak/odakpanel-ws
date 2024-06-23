@@ -12,6 +12,8 @@ const sequelize = new Sequelize(
     dialectOptions: {
       options: {
         trustServerCertificate: true,
+        dateStrings: true,
+        typeCast: true,
       },
     },
   }

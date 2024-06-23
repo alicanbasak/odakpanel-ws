@@ -1,5 +1,6 @@
 const orderService = require("../services/orderList.service");
 const handleAsync = require("../handlers/asyncHandler");
+const getFileFromExcel = require("../utils/getFileFromExcel");
 
 const getAllOrders = handleAsync(async (req, res) => {
   let {
@@ -52,9 +53,10 @@ const getOrderById = handleAsync(async (req, res) => {
 });
 
 const createOrder = handleAsync(async (req, res) => {
-  const order = req.body;
-  const result = await orderService.createOrder(order);
-  return result;
+  const data = getFileFromExcel(req);
+
+  const createdOrder = await orderService.createOrder(data);
+  return { createdOrder };
 });
 
 const updateOrder = handleAsync(async (req, res) => {

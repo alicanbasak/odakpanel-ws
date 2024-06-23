@@ -10,15 +10,15 @@ const {
 const buildWhereClauses = require("../utils/whereClausesBuilder");
 
 class FactoryService {
-  async getAllFactories(page = 1, pagesize = 10, search) {
-    const offset = (page - 1) * pagesize;
+  async getAllFactories(page = 1, pageSize = 10, search) {
+    const offset = (page - 1) * pageSize;
     const searchFields = ["Name"];
     const whereClauses = buildWhereClauses(search, searchFields);
 
     const factories = await findAllRecords(Factories, {
       where: whereClauses,
       offset,
-      limit: pagesize,
+      limit: pageSize,
       order: [["Id", "DESC"]],
     });
 
