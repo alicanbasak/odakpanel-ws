@@ -72,10 +72,40 @@ const deleteOrder = handleAsync(async (req, res) => {
   return { deletedCount };
 });
 
+// this function will convert to a service function
+const deleteMultipleOrders = handleAsync(async (req, res) => {
+  const { ids } = req.body;
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res
+      .status(400)
+      .json({ message: "IDs must be provided as an array" });
+  }
+
+  const results = await Promise.all(
+    ids.map(async id => {
+      try {
+        await orderService.deleteOrder(id);
+        return { id, message: "Order deleted successfully" };
+      } catch (error) {
+        console.error("Error deleting Order with ID:", id, error);
+        return { id, message: "Error deleting Order" };
+      }
+    })
+  );
+
+  return {
+    statusCode: 200,
+    message: "Multiple Orders deleted successfully",
+    results,
+  };
+});
+
 module.exports = {
   getAllOrders,
   getOrderById,
   createOrder,
   updateOrder,
   deleteOrder,
+  deleteMultipleOrders,
 };

@@ -13,4 +13,6 @@ router
   .put(controller.updateOrder)
   .delete(controller.deleteOrder);
 
+router.route("/delete").post(controller.deleteMultipleOrders);
+
 module.exports = router;

@@ -10,4 +10,6 @@ router
   .put(controller.updateRfq)
   .delete(controller.deleteRfq);
 
+router.route("/delete").post(controller.deleteMultipleRfqs);
+
 module.exports = router;

@@ -11,7 +11,7 @@ const buildWhereClauses = require("../utils/whereClausesBuilder");
 class MemberService {
   async getAllMembers(page = 1, pageSize = 10, search) {
     const offset = (page - 1) * pageSize;
-    const searchFields = ["Name"];
+    const searchFields = ["Name", "Email", "Surname", "Username"];
     const whereClauses = buildWhereClauses(search, searchFields);
 
     const members = await findAllRecords(Member, {
