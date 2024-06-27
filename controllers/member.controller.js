@@ -6,33 +6,28 @@ const getAllMembers = handleAsync(async (req, res) => {
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
 
-  const members = await memberService.getAllMembers(page, pageSize, search);
-  return members;
+  return await memberService.getAllMembers(page, pageSize, search);
 });
 
 const getMemberById = handleAsync(async function (req, res) {
   const { id } = req.params;
-  const member = await memberService.getMemberById(id);
-  return member;
+  return await memberService.getMemberById(id);
 });
 
 const createMember = handleAsync(async function (req, res) {
   const newMember = req.body;
-  const member = await memberService.createMember(newMember);
-  return member;
+  return await memberService.createMember(newMember);
 });
 
 const updateMember = handleAsync(async function (req, res) {
   const { id } = req.params;
   const updatedMember = req.body;
-  const member = await memberService.updateMember(id, updatedMember);
-  return member;
+  return await memberService.updateMember(id, updatedMember);
 });
 
 const deleteMember = handleAsync(async function (req, res) {
   const { id } = req.params;
-  const member = await memberService.deleteMember(id);
-  return member;
+  return await memberService.deleteMember(id);
 });
 
 module.exports = {

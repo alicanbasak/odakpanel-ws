@@ -6,27 +6,23 @@ const getInvoices = handleAsync(async (req, res) => {
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
 
-  const invoices = await invoicesService.getInvoices(page, pageSize, search);
-  return invoices;
+  return await invoicesService.getInvoices(page, pageSize, search);
 });
 
 const getInvoiceById = handleAsync(async (req, res) => {
   const { id } = req.params;
-  const invoice = await invoicesService.getInvoiceById(id);
-  return invoice;
+  return await invoicesService.getInvoiceById(id);
 });
 
 const createInvoice = handleAsync(async (req, res) => {
   const data = req.body;
-  const invoice = await invoicesService.createInvoice(data);
-  return invoice;
+  return await invoicesService.createInvoice(data);
 });
 
 const updateInvoice = handleAsync(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
-  const invoice = await invoicesService.updateInvoice(id, data);
-  return invoice;
+  return await invoicesService.updateInvoice(id, data);
 });
 
 const deleteInvoice = handleAsync(async (req, res) => {

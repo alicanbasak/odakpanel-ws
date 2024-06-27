@@ -20,9 +20,7 @@ const deleteRecord = async (model, id) => {
     where: { Id: id },
   });
 };
-const countRecords = async (model, whereClauses) => {
-  return await model.count({ where: whereClauses });
-};
+const countRecords = async (model, whereClauses) => model.count({where: whereClauses});
 
 const findAllRecords = async (model, options) => {
   return await model.findAll(options);
@@ -30,10 +28,9 @@ const findAllRecords = async (model, options) => {
 
 const distinctRecords = async (columnName, tableName) => {
   const query = `SELECT DISTINCT ${columnName} FROM ${tableName}`;
-  const result = await sequelize.query(query, {
+  return await sequelize.query(query, {
     type: QueryTypes.SELECT,
   });
-  return result;
 };
 
 const findRecordByField = async (model, field, value) => {

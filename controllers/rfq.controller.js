@@ -6,27 +6,23 @@ const getRfqList = handleAsync(async (req, res) => {
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
 
-  const rfqs = await rfqService.getRfqList(page, pageSize, search);
-  return rfqs;
+  return await rfqService.getRfqList(page, pageSize, search);
 });
 
 const getRfqById = handleAsync(async (req, res) => {
   const { id } = req.params;
-  const rfq = await rfqService.getRfqById(id);
-  return rfq;
+  return await rfqService.getRfqById(id);
 });
 
 const createRfq = handleAsync(async (req, res) => {
   const rfq = req.body;
-  const newRfq = await rfqService.createRfq(rfq);
-  return newRfq;
+  return await rfqService.createRfq(rfq);
 });
 
 const updateRfq = handleAsync(async (req, res) => {
   const { id } = req.params;
   const updatedRfq = req.body;
-  const rfq = await rfqService.updateRfq(id, updatedRfq);
-  return rfq;
+  return await rfqService.updateRfq(id, updatedRfq);
 });
 
 const deleteRfq = handleAsync(async (req, res) => {

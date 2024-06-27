@@ -5,31 +5,27 @@ const getAllFactories = handleAsync(async (req, res) => {
   let { page, pageSize, search } = req.query;
   page = parseInt(page) || 1;
   pageSize = parseInt(pageSize) || 10;
-  const factories = await factoriesService.getAllFactories(
-    page,
-    pageSize,
-    search
+  return await factoriesService.getAllFactories(
+      page,
+      pageSize,
+      search
   );
-  return factories;
 });
 
 const getFactoryById = handleAsync(async (req, res) => {
   const { id } = req.params;
-  const factory = await factoriesService.getFactoryById(id);
-  return factory;
+  return await factoriesService.getFactoryById(id);
 });
 
 const createFactory = handleAsync(async (req, res) => {
   const factory = req.body;
-  const newFactory = await factoriesService.createFactory(factory);
-  return newFactory;
+  return await factoriesService.createFactory(factory);
 });
 
 const updateFactory = handleAsync(async (req, res) => {
   const { id } = req.params;
   const updatedFactory = req.body;
-  const factory = await factoriesService.updateFactory(id, updatedFactory);
-  return factory;
+  return await factoriesService.updateFactory(id, updatedFactory);
 });
 
 const deleteFactory = handleAsync(async (req, res) => {

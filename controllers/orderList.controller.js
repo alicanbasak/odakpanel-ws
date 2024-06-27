@@ -24,23 +24,21 @@ const getAllOrders = handleAsync(async (req, res) => {
   factoryId = factoryId ? factoryId.split(",") : [];
   customerId = customerId ? customerId.split(",") : [];
 
-  const orders = await orderService.getAllOrders(
-    page,
-    pageSize,
-    factoryId,
-    customerId,
-    shipmentType,
-    status,
-    ccl,
-    layers,
-    search,
-    excludeFactoryId,
-    orderToBeSent,
-    delay,
-    dataWillBeSend
+  return await orderService.getAllOrders(
+      page,
+      pageSize,
+      factoryId,
+      customerId,
+      shipmentType,
+      status,
+      ccl,
+      layers,
+      search,
+      excludeFactoryId,
+      orderToBeSent,
+      delay,
+      dataWillBeSend
   );
-
-  return orders;
 });
 
 const getOrderById = handleAsync(async (req, res) => {
