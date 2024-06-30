@@ -5,7 +5,7 @@ const router = require("./initializers/routes");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-connectDatabase().then(r => console.log(r));
+connectDatabase();
 
 app.use(express.json());
 app.use(cors());
